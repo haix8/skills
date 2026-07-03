@@ -1,0 +1,4 @@
+interface:
+  display_name: "Douyin Ad Video Highlights"
+  short_description: "Make Douyin ad cuts and CapCut drafts."
+  default_prompt: "Use $douyin-ad-video-highlights to turn this source video into Douyin ad-ready short-video variants and an editable CapCut/Jianying draft."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "WeChat Draft Publisher"
+  short_description: "Upload finished articles to WeChat drafts"
+  default_prompt: "Use $wechat-draft-publisher to upload this finished article and cover image to my WeChat official account drafts."

@@ -1,0 +1,16 @@
+{
+  "name": "wechat-draft-publisher",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Upload a finished article and cover image to a WeChat official account draft box.",
+  "main": "scripts/publish-draft.js",
+  "scripts": {
+    "publish": "node scripts/publish-draft.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.0",
+    "form-data": "^4.0.0",
+    "markdown-it": "^14.0.0"
+  }
+}

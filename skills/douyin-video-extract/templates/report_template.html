@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{标题}}</title>
+<style>
+  /* ============================================================
+     拆解报告通用样式 —— 直接复用，不要每次重写
+     浅色主题；如需深色主题，改 :root 里的变量即可
+     ============================================================ */
+  :root{
+    --bg:#f5f5f3; --card:#ffffff; --line:#e6e4df;
+    --ink:#1c1b19; --ink2:#57534c; --ink3:#8c877e;
+    --accent:#c8452d; --accent-soft:#fbeeea;   /* 主强调：红 */
+    --gold:#a8801a; --gold-soft:#fdf6e3;       /* 高亮词：金 */
+    --teal:#1f7a72; --teal-soft:#eaf5f3;
+    --blue:#2f6f9f; --blue-soft:#eef4f9;       /* 备注/提醒：蓝 */
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.75;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px;margin:0 auto;padding:48px 24px 80px;}
+
+  /* ---- 页头 ---- */
+  header{margin-bottom:40px;padding-bottom:32px;border-bottom:2px solid var(--ink);}
+  .kicker{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:14px;}
+  h1{font-size:33px;line-height:1.32;margin:0 0 20px;font-weight:800;letter-spacing:-.01em;}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:14px;color:var(--ink2);}
+  .meta b{color:var(--ink);font-weight:600;}
+  .src{margin-top:16px;font-size:13px;color:var(--ink3);word-break:break-all;}
+  .src a{color:var(--blue);text-decoration:none;}
+  .src a:hover{text-decoration:underline;}
+
+  /* ---- 章节 ---- */
+  section{margin-bottom:46px;}
+  h2{font-size:21px;font-weight:700;margin:0 0 18px;padding-left:14px;border-left:4px solid var(--accent);line-height:1.4;}
+  h3{font-size:16px;font-weight:700;margin:24px 0 10px;color:var(--ink);}
+  p{margin:0 0 14px;color:var(--ink2);font-size:15px;}
+  strong{color:var(--ink);font-weight:700;}
+  code{background:#f0eee9;padding:1px 5px;border-radius:3px;font-size:13px;color:#7a2f1d;}
+  .y{color:var(--gold);font-weight:700;}
+
+  /* ---- 卡片 ---- */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 24px;margin-bottom:16px;}
+  .concl{background:var(--accent-soft);border:1px solid #f0d5cd;border-radius:12px;padding:18px 22px;font-size:15px;color:#7a2f1d;font-weight:500;}
+  .concl b{color:var(--accent);}
+  .note{background:var(--blue-soft);border:1px solid #d6e3ee;border-radius:12px;padding:16px 20px;font-size:14px;color:#1f4a68;}
+  .note b{color:var(--blue);}
+
+  /* ---- 数据方块 ---- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0;}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 14px;text-align:center;}
+  .stat .num{font-size:25px;font-weight:800;letter-spacing:-.02em;line-height:1.2;}
+  .stat .lbl{font-size:12px;color:var(--ink3);margin-top:4px;}
+  .stat .pct{font-size:12px;font-weight:700;margin-top:6px;color:var(--accent);}
+  .stat.hero{background:var(--accent-soft);border-color:#f0d5cd;}
+  .stat.hero .num{color:var(--accent);}
+
+  /* ---- 表格 ---- */
+  table{width:100%;border-collapse:collapse;font-size:14px;margin:12px 0 18px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  th{background:#faf9f7;text-align:left;padding:11px 14px;font-weight:700;color:var(--ink);font-size:13px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  td{padding:10px 14px;border-bottom:1px solid #f0eee9;color:var(--ink2);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  td.t{white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--ink3);font-size:13px;}
+  td.sp{color:var(--ink);font-weight:600;}
+
+  /* ---- 关键帧画廊 ---- */
+  .frames{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px;margin:18px 0;}
+  .frames figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .frames img{width:100%;display:block;aspect-ratio:9/16;object-fit:cover;}
+  .frames figcaption{font-size:11.5px;color:var(--ink3);padding:8px 10px;line-height:1.5;}
+
+  /* ---- 代码块 ---- */
+  pre{background:#1c1b19;color:#e8e6e1;padding:20px 22px;border-radius:12px;overflow-x:auto;font-size:13px;line-height:1.9;font-family:"SF Mono",Menlo,Consolas,monospace;margin:12px 0;}
+  pre .c{color:#a8a29a;}
+  pre .k{color:#f0b429;font-weight:700;}
+
+  ol,ul{color:var(--ink2);font-size:15px;padding-left:22px;margin:10px 0 16px;}
+  li{margin-bottom:8px;}
+  li b{color:var(--ink);}
+
+  /* ---- 文案层来源徽章 ---- */
+  .badge{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;margin-right:6px;}
+  .badge.no{background:var(--blue-soft);color:var(--blue);}
+  .badge.l2{background:var(--gold-soft);color:var(--gold);}
+  .badge.l3{background:var(--accent-soft);color:var(--accent);}
+
+  /* ---- 金句卡（深色块，用于呈现核心框架）---- */
+  .jingle{background:linear-gradient(180deg,#23211e,#1c1b19);border-radius:14px;padding:26px 28px;margin:18px 0;color:#f2f0eb;}
+  .jingle .jt{font-size:12px;letter-spacing:.16em;color:#8f8a80;margin-bottom:18px;font-weight:700;}
+  .jingle .row{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid #332f2a;}
+  .jingle .row:last-child{border-bottom:none;}
+  .jingle .l{font-size:15px;color:#d8d4cb;}
+  .jingle .r{font-size:23px;font-weight:800;color:#f0b429;letter-spacing:.02em;white-space:nowrap;}
+
+  footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--line);font-size:13px;color:var(--ink3);}
+
+  @media(max-width:660px){
+    .wrap{padding:28px 16px 60px;}
+    h1{font-size:24px;}
+    .stats{grid-template-columns:repeat(2,1fr);}
+    table{font-size:12.5px;}
+    th,td{padding:8px 9px;}
+    .jingle .r{font-size:19px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ============================================================
+     报告骨架：章节按需删减，但「性质判定 / 互动结构 / 文案时间轴 /
+     节奏与形态 / 字幕配色 / 画面验证 / CTA / 结构模板」是标配九节。
+     投流素材必须另有「数据侧提醒」一节。
+     时间轴表里 <span class="y">…</span> 标金色高亮词。
+     ============================================================ -->
+
+<header>
+  <div class="kicker">{{平台}}视频拆解报告{{性质后缀，如 · 投流素材}}</div>
+  <h1>{{一句话主题，用视频里最狠的那句}}</h1>
+  <div class="meta">
+    <span>作者：<b>{{昵称}}</b></span>
+    <span>粉丝：<b>{{粉丝数}}</b></span>
+    <span>发布：<b>{{发布时间}}</b></span>
+    <span>时长：<b>{{秒数}} 秒</b></span>
+    <span>画幅：<b>{{分辨率}} 竖屏</b></span>
+  </div>
+  <div class="src">原片：<a href="{{原视频链接}}" target="_blank">{{原视频链接}}</a></div>
+</header>
+
+<section>
+  <h2>一、性质判定</h2>
+  <table>
+    <tr><th>项</th><th>值</th><th>判断</th></tr>
+    <tr><td>is_ads / ad_aweme_source</td><td>{{}}</td><td class="sp">{{自然内容 / 投流素材}}</td></tr>
+    <tr><td>link_ad_data</td><td>{{有/无}}</td><td>{{挂了什么组件}}</td></tr>
+    <tr><td>定位</td><td>{{}}</td><td>{{变现链路在哪}}</td></tr>
+  </table>
+  <!-- 有互动数据时加 .stats 方块；投流素材用 .stat.warn 弱化处理 -->
+  <div class="concl">{{一句话结论}}</div>
+</section>
+
+<section>
+  <h2>二、互动结构</h2>
+  <!-- 用占比不用绝对值：
+       收藏÷点赞 = 工具/采购信号
+       评论÷点赞 = 讨论卷入信号
+       转发÷点赞 = 社交传播信号
+       与之前拆过的视频做横向对比表最有价值 -->
+</section>
+
+<section>
+  <h2>三、逐句文案时间轴</h2>
+  <p>
+    <span class="badge no">L1 官方字幕轨</span>{{命中 / 未命中（原因）}}<br>
+    <span class="badge l2">L2 口播 ASR</span>{{模型}}<br>
+    <span class="badge l3">L3 画面花字 OCR</span>{{帧数}} 帧 / {{fps}}fps
+  </p>
+  <p>{{哪层为准 + ASR 误识修正处的数量}}</p>
+  <table>
+    <tr><th>时间</th><th>文案</th><th>备注</th></tr>
+    <!-- 时间轴行：<tr><td class="t">0.0–2.5s</td><td>…<span class="y">高亮词</span>…</td><td></td></tr> -->
+  </table>
+  <!-- 有强调卡/金句卡时插 .jingle 深色块 -->
+  <!-- ASR 误识修正明细表放本节末 -->
+</section>
+
+<section>
+  <h2>四、节奏与形态</h2>
+  <!-- 标注：时长 / 信息段数 / 平均节奏 / 剪辑点数 / 视觉变化次数
+       并与其他拆过的视频做横向对比 -->
+</section>
+
+<section>
+  <h2>五、字幕配色层级</h2>
+  <!-- 表格：层级 / 颜色 / 位置 / 承担什么词
+       结尾给一句"颜色是稀缺资源"式的归纳 -->
+</section>
+
+<section>
+  <h2>六、画面验证</h2>
+  <div class="frames">
+    <!-- <figure><img src="{{关键帧目录}}/f_001.jpg" alt=""><figcaption>0.0s · {{说明}}</figcaption></figure> -->
+  </div>
+</section>
+
+<section>
+  <h2>七、CTA 与人群点名</h2>
+  <!-- 含"零 CTA"的情况，并解释为什么零 CTA 反而合理 -->
+</section>
+
+<section>
+  <h2>八、可直接复用的结构模板</h2>
+<pre><span class="c">[0-XXs]</span>   {{段落名}}   {{做了什么}}
+<span class="c">[XX-YYs]</span> {{段落名}}   {{做了什么}}</pre>
+  <h3>可迁移到其他行业的点</h3>
+  <ol>
+    <li><b>{{要点}}</b>{{说明}}</li>
+  </ol>
+</section>
+
+<!-- 投流素材必加此节 -->
+<section>
+  <h2>九、数据侧的一个提醒</h2>
+  <div class="note">这条是 <b>投流素材</b>，自然互动<b>不能作为内容质量判据</b>。</div>
+  <ul>
+    <li>投放后台的 <b>3 秒 / 5 秒完播率</b></li>
+    <li><b>完播率 / 播完成本</b></li>
+    <li><b>主页进入率 / 私信成本</b></li>
+    <li>人群画像与目标客户的重合度</li>
+  </ul>
+</section>
+
+<footer>
+  拆解时间 {{YYYY-MM-DD}} ｜ 文案提取：{{用了哪几层}}<br>
+  附件：原片 <code>{{文件名}}</code> · 关键帧 <code>{{目录}}/</code>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+scripts/subtitle_ocr
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# ---- Node ----
+node_modules/

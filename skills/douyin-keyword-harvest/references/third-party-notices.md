@@ -11,7 +11,7 @@
 - **版本（version）**：1.1.1
 - **声明的许可**：MIT
 - **内嵌位置**：
-  - `scripts/browser/`（全部脚本与 `refs/` 参考文档）
+  - `scripts/`（全部脚本与 `refs/` 参考文档）
   - `references/browser-automation-cdp.md`（原技能 SKILL.md，作为操作手册）
 
 > **说明**：上游技能在 `SKILL.md` frontmatter 中声明 `license: MIT`，

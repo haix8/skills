@@ -1,22 +1,8 @@
 > **内嵌版路径说明**：本文原为独立技能 `browser-automation-cdp` 的操作手册，
-> 在本技能中已被内嵌到 **`scripts/browser/`**。
+> 在本技能中已被内嵌到 **`scripts/`**。
 > 因此文中出现的 `<SKILL_DIR>/scripts/xxx.py`（如 `cdp.py`、`start_chrome.py`）
-> 一律对应 **`scripts/browser/xxx.py`**，命令参数与用法完全不变。
+> 一律对应 **`scripts/xxx.py`**，命令参数与用法完全不变。
 > 该部分版权归原作者 **W2Q**，**MIT 许可**。
-
----
-name: browser-automation-cdp
-description: "浏览器自动化与网页抓取（Browser Automation / Web Scraping）— 用 Chrome DevTools Protocol 驱动本机真实 Chrome 或 Edge 浏览器，完成网页打开、点击、填表、截图、数据采集与定时监控。相比无头爬虫更不容易被识别为机器人，适合需要登录态、存在反爬机制、遇验证码或依赖 JavaScript 动态渲染的页面。当用户需要浏览器自动化、网页自动化、网页抓取、爬虫爬取、数据采集、网页截图、自动填表、表单提交、网页监控、价格监控比价、绕过反爬，或发现直接抓取被拦截时，应使用本技能。"
-display_name: "浏览器自动化 · 网页抓取与数据采集"
-display_name_en: "Browser Automation · Web Scraping & Data Extraction"
-description_zh: "用 Chrome DevTools Protocol 驱动本机真实 Chrome 或 Edge 浏览器，做浏览器自动化与网页数据采集。全程脚本化、零第三方依赖，装好 Python 即可运行。覆盖场景：网页抓取与爬虫（直接抓取被拦、需要先登录、前端动态渲染）、数据采集与网页采集、自动填表与表单提交、自动点击与页面操作、网页截图与整页截图、网页监控与价格监控比价、竞品与商品信息追踪、批量查询与信息核对。相比无头爬虫，真实浏览器带完整指纹，更不容易被识别为机器人，可绕过常见反爬与验证码。能力包括：自动探测或引导安装 Chrome（官方手动下载、自动安装，或用系统自带 Edge 免安装）、以调试模式启动、持久登录态管理、登录过期自动检测与告警、按日期落盘 JSON 与 CSV、环境一键体检。配合定时任务可实现每日自动采集。"
-description_en: "Drive your real local Chrome or Edge browser through the CDP for browser automation and web scraping. Fully scripted with zero third-party dependencies, Python alone is enough. Covers web scraping and crawling blocked by anti-bot systems, pages behind a login, and JavaScript-rendered content; data extraction; auto form filling and submission; auto clicking; page and full-page screenshots; web monitoring; price tracking and comparison; competitor monitoring and bulk lookups. Because it drives a real browser with a genuine fingerprint, it is far less likely to be flagged as a bot than a headless scraper, and it gets past most anti-bot walls and captchas. Features: auto-detect or guide Chrome installation; debug-mode launch; persistent login sessions; automatic login-expiry detection and alerts; JSON and CSV output organized by date; one-command environment health check. Pair with scheduled automation for daily collection."
-agent_created: true
-version: 1.1.1
-license: MIT
-author: "W2Q"
-tags: [browser-automation, web-automation, web-scraping, data-extraction, crawler, crawling, cdp, chrome, chromium, edge, headless-browser, screenshot, form-filling, auto-click, rpa, anti-bot, captcha, login-session, price-monitoring, web-monitoring, price-tracking, javascript-rendering, 浏览器自动化, 网页自动化, 网页抓取, 网页采集, 数据采集, 爬虫, 爬取, 反爬, 验证码, 登录态, 网页截图, 自动填表, 自动点击, 网页监控, 价格监控, 比价, 竞品监控, 无头浏览器, 自动化脚本]
----
 
 # 浏览器自动化 · 网页抓取与数据采集（CDP 真实浏览器）
 
@@ -32,7 +18,7 @@ tags: [browser-automation, web-automation, web-scraping, data-extraction, crawle
 | 步骤 | 动作 | 何时需要 | 产出 |
 |------|------|---------|------|
 | Step 0 | 准备浏览器 | 首次使用，或提示找不到浏览器时 | 浏览器可执行文件路径 |
-| Step 1 | 启动调试浏览器 | 每次开始自动化前 | CDP 端口就绪 |
+| Step 1 | 启动调试浏览器 | 探活失败时；整轮任务只启动一次 | CDP 端口就绪 |
 | Step 2 | 环境体检 | 出现异常时；平时可跳过 | 体检报告 |
 | Step 3 | 操作浏览器 | 打开/点击/填表/截图 | 页面按预期响应 |
 | Step 4 | 采集数据 | 需要把页面内容存下来时 | JSON + CSV |
@@ -65,7 +51,11 @@ python <SKILL_DIR>/scripts/setup_chrome.py
 
 ## Step 1：启动调试浏览器
 
-**先决定用哪种配置目录**（--user-data-dir），这决定了登录态是否保留：
+**动手前先探活：`python <SKILL_DIR>/scripts/cdp.py status`。**
+返回 `CDP_OK` 即直接复用，不重复启动 —— 重启会关闭现有标签页、丢失页面状态，
+并重新触发登录态解密。仅在 `CDP_UNREACHABLE` 时继续下面的启动步骤。
+
+**然后决定用哪种配置目录**（--user-data-dir），这决定了登录态是否保留：
 
 | 场景 | 命令 | 登录态 |
 |------|------|--------|
@@ -104,7 +94,8 @@ python <SKILL_DIR>/scripts/start_chrome.py --proxy <代理地址>
 此时**不要用 `start_chrome.py`**，改为手工启动，两个条件缺一不可：
 
 1. 追加 `--no-sandbox --disable-gpu --disable-dev-shm-usage`；
-2. 让浏览器进程**常驻后台**运行——用一次性的前台命令启动，命令一返回进程就会被回收。
+2. 让浏览器进程**常驻后台**运行——用一次性的前台命令启动，命令一返回进程即被回收；
+   `nohup`、`setsid` 等会话分离手段不足以避免回收，需由宿主平台的常驻任务机制托管。
 
 ```bash
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
@@ -181,7 +172,7 @@ python <SKILL_DIR>/scripts/scrape.py \
   --name "<任务名>"
 ```
 
-抽取脚本照抄 `<SKILL_DIR>/templates/extract.example.js`，**只改文件顶部的 CONFIG 四处**（分隔关键词、目标行正则、回溯行数、噪音词）。
+抽取脚本照抄 `<SKILL_DIR>/scripts/extract.example.js`，**只改文件顶部的 CONFIG 四处**（分隔关键词、目标行正则、回溯行数、噪音词）。
 
 产出结构：
 
@@ -203,11 +194,15 @@ python <SKILL_DIR>/scripts/scrape.py \
 
 ## Step 5：关闭浏览器
 
+**任务全部完成后执行。这是交付流程的一部分。**
+
 ```bash
 python <SKILL_DIR>/scripts/stop_chrome.py
+python <SKILL_DIR>/scripts/cdp.py status    # 应返回 CDP_UNREACHABLE
 ```
 
 如换了端口：加 `--port 9333`。持久配置中的登录态会保留，下次启动无需重新登录。
+关闭后需复核端口确实不再响应，再结束任务。
 
 ---
 
@@ -222,6 +217,8 @@ python <SKILL_DIR>/scripts/stop_chrome.py
 | 把 `--proxy` 长期固定写死 | 代理未运行时全部页面打不开 | 仅在确需时临时加，用完去掉 |
 | 直接杀所有浏览器进程 | 可能误关用户正在用的浏览器 | 用 `stop_chrome.py`，它只结束带调试端口的进程 |
 | 未确认登录态就上定时任务 | 半夜失效无人处理，产出脏数据 | 先手动验证一次再上定时 |
+| 每一步都重启浏览器 | 关闭标签页、丢失页面状态、重复解密登录态 | 探活通过即复用，整轮任务只启动一次 |
+| 任务结束不关闭浏览器 | 残留进程占用端口与配置目录，影响下次启动 | 收尾执行 `stop_chrome.py` 并复核 `CDP_UNREACHABLE` |
 
 ---
 

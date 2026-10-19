@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """公共前置检查：定位浏览器通道（cdp.py）+ 确认调试浏览器可达。
 
-浏览器通道已**内嵌在 scripts/browser/**，开箱即用，不需要额外安装任何技能。
+浏览器通道已**内嵌在 scripts/**，开箱即用，不需要额外安装任何技能。
 若用户自己装了市场版 browser-automation-cdp 并想用那一份，用 --cdp-skill 指过去即可。
 
 退出码约定：2 = 找不到浏览器通道；3 = 找到了但调试浏览器不可达。
@@ -14,15 +14,15 @@ from pathlib import Path
 BROWSER_SKILL = "browser-automation-cdp"
 VENDOR_HINT = (
     "找不到浏览器通道 cdp.py。\n"
-    "  → 正常情况下它内嵌在 本技能/scripts/browser/cdp.py，不该缺失；\n"
+    "  → 正常情况下它内嵌在 本技能/scripts/cdp.py，不该缺失；\n"
     "    请检查技能包是否解压完整。\n"
     "  → 若想改用市场版技能，用 --cdp-skill <技能目录> 指定。\n"
 )
 
 CDP_HINT = (
     "调试浏览器不可达（CDP 无响应）。本技能只负责驱动浏览器，不代替浏览器本体：\n"
-    "  → 启动：python <本技能>/scripts/browser/start_chrome.py\n"
-    "  → 然后复核：python <本技能>/scripts/browser/cdp.py status 应返回 CDP_OK\n"
+    "  → 启动：python <本技能>/scripts/start_chrome.py\n"
+    "  → 然后复核：python <本技能>/scripts/cdp.py status 应返回 CDP_OK\n"
     "  → 若该环境不允许 Chrome 启用自身沙箱（start_chrome.py 打印 READY 但进程随即退出，\n"
     "    日志含 'sandbox initialization failed'），改用手工常驻启动：\n"
     "    chrome --remote-debugging-port=9222 --user-data-dir=<配置目录> \\\n"
@@ -41,7 +41,7 @@ def _candidate_dirs():
     skill_root = here.parent                    # <本技能>
     home = Path.home()
     raw = [
-        here / "browser",                                       # ① 内嵌副本（默认，最优先）
+        here,                                       # ① 内嵌副本（默认，最优先）
         home / ".workbuddy" / "skills" / BROWSER_SKILL / "scripts",   # ② 用户装的市场版
         skill_root.parent / BROWSER_SKILL / "scripts",          # ③ 与本技能同级安装
         skill_root / BROWSER_SKILL / "scripts",                 # ④ 被塞进本技能目录

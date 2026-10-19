@@ -4,7 +4,7 @@
 scrape.py —— 通用页面采集：打开网址 → 等页面 → 执行抽取脚本 → 落盘 JSON + CSV。
 
 用法：
-    python scripts/scrape.py --url "<网址>" --extract templates/extract.example.js --out "<数据目录>"
+    python scripts/scrape.py --url "<网址>" --extract scripts/extract.example.js --out "<数据目录>"
     python scripts/scrape.py --url "<网址>" --extract my.js --out data --name 价格 --wait 8
     python scripts/scrape.py --url "<网址>" --extract my.js --out data --login-marker "登录"
 

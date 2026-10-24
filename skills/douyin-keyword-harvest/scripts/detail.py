@@ -43,7 +43,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dir", required=True)
     ap.add_argument("--urls", required=True, help="逗号分隔的视频链接")
-    ap.add_argument("--cdp-skill", default=None, help="指定浏览器通道目录（默认用内嵌的 scripts/browser）")
+    ap.add_argument("--cdp-skill", default=None, help="指定浏览器通道目录（默认用内嵌的 scripts）")
     ap.add_argument("--port", default="9222")
     ap.add_argument("--gap-min", type=float, default=12.0)
     ap.add_argument("--gap-max", type=float, default=18.0)

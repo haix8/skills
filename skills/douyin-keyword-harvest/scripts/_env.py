@@ -20,14 +20,17 @@ VENDOR_HINT = (
 )
 
 CDP_HINT = (
-    "调试浏览器不可达（CDP 无响应）。本技能只负责驱动浏览器，不代替浏览器本体：\n"
-    "  → 启动：python <本技能>/scripts/start_chrome.py\n"
-    "  → 然后复核：python <本技能>/scripts/cdp.py status 应返回 CDP_OK\n"
+    "调试浏览器不可达（CDP 无响应）。本技能只负责驱动浏览器，不代替浏览器本体。\n"
+    "以下命令在技能根目录执行：\n"
+    "  → 启动：python scripts/start_chrome.py\n"
+    "  → 复核：python scripts/cdp.py status 应返回 CDP_OK\n"
     "  → 若该环境不允许 Chrome 启用自身沙箱（start_chrome.py 打印 READY 但进程随即退出，\n"
     "    日志含 'sandbox initialization failed'），改用手工常驻启动：\n"
-    "    chrome --remote-debugging-port=9222 --user-data-dir=<配置目录> \\\n"
+    "    chrome --remote-debugging-port=9222 --user-data-dir=<profile 目录> \\\n"
     "          --no-first-run --no-sandbox --disable-gpu --disable-dev-shm-usage about:blank\n"
     "    详见 references/browser-automation-cdp.md 的「受限环境启动（沙箱不可用）」一节。\n"
+    "  → 若当前环境没有浏览器或未登录抖音，可用内置样本验证产出格式：\n"
+    "    python scripts/demo.py --out <输出目录>\n"
 )
 
 

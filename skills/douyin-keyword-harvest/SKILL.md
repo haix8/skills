@@ -6,7 +6,7 @@ description: "按关键词批量采集抖音短视频的文案与互动数据（
 description_zh: 按关键词批量采集抖音短视频文案与互动数据，按发布时间与点赞量筛选排序。
 description_en: Harvest Douyin short-video captions and engagement metrics by keyword, then filter and rank by recency and likes.
 category: writing
-version: 1.0.1
+version: 1.0.2
 author: 大鱼来客
 agent_created: true
 tags: [douyin, 抖音, short-video, 短视频, 文案, copywriting, content-research, 素材采集, keyword-harvest, engagement-metrics, 投放素材]
@@ -47,7 +47,9 @@ examples_en:
    ├── setup_chrome.py      浏览器通道：探测与安装浏览器
    ├── doctor.py            浏览器通道：环境体检
    ├── scrape.py            浏览器通道：通用抓取
-   └── extract.example.js   抽取脚本示例
+   ├── extract.example.js   抽取脚本示例
+   ├── demo.py              无浏览器环境下的流程演示
+   └── demo_data.json       演示用内置样本
    ```
 
    - 改用市场版 `browser-automation-cdp` 时，加 `--cdp-skill <技能目录>` 指过去。
@@ -59,6 +61,35 @@ examples_en:
    日志含 `sandbox initialization failed: Operation not permitted`。
    处置见「浏览器生命周期」的启动一节。
 4. 仅依赖 Python 标准库，无需安装第三方包。
+
+## 环境要求与验证
+
+本技能驱动**本机真实浏览器**，运行前提如下：
+
+| 条件 | 说明 |
+|---|---|
+| 浏览器 | 已安装 Chrome 或 Edge，用 `python scripts/setup_chrome.py` 探测或安装 |
+| 网络 | 可访问 `douyin.com` |
+| 登录态 | 抖音网页版搜索需登录，首次使用由用户在浏览器窗口扫码一次 |
+| 无沙箱环境 | 需在启动命令追加参数，见「浏览器生命周期」 |
+
+**在没有浏览器的环境中验证产出格式**：用内置样本跑通完整流程，不访问网络。
+
+```bash
+python scripts/demo.py --out ./demo-out
+python scripts/rank.py --dir ./demo-out --days 92
+```
+
+`demo.py` 生成 `all_items.json` / `all_items.csv`（20 条）与 `details.json`（3 条含精确发布时间），
+`rank.py` 直接处理该目录并输出榜单。可在无浏览器、未登录的条件下确认三步产出的字段与结构。
+
+**环境自检**：
+
+```bash
+python scripts/doctor.py
+```
+
+逐项报告浏览器路径、调试端口、CDP 连通性、登录态目录，并给出编号的修复建议。
 
 ## 浏览器生命周期
 
@@ -116,6 +147,12 @@ python scripts/cdp.py status    # 应返回 CDP_UNREACHABLE
 > 优先使用 `修车被坑`、`保养套路`、`修理工的心酸` 这类组合；宽泛词最多保留 1 个用于探边界。
 
 ## 三步流程
+
+执行前先确认环境：`python scripts/doctor.py`。若当前环境没有浏览器或未登录抖音，
+改用 `python scripts/demo.py --out <目录>` 走通产出格式（见「环境要求与验证」），
+实际采集需在装有浏览器并完成登录的本机执行。
+
+三步依次为：采集 → 筛选 → 补精确数据。第 1、3 步依赖浏览器，第 2 步为纯本地计算。
 
 ### 第 1 步：批量采集搜索结果卡片
 
@@ -213,6 +250,7 @@ python scripts/cdp.py eval "JSON.stringify([...document.querySelectorAll('[data-
 |---|---|---|
 | 退出码 2：找不到浏览器通道 `cdp.py` | 技能包解压不完整 | 确认 `scripts/cdp.py` 存在；或 `--cdp-skill <技能目录>` 指向市场版 |
 | 退出码 3：调试浏览器不可达 | 浏览器未启动 | 运行 `scripts/start_chrome.py`，再用 `cdp.py status` 复核到 `CDP_OK`；受限环境见「浏览器生命周期」 |
+| 运行环境没有浏览器 | 无法驱动页面 | 用 `python scripts/demo.py --out <目录>` 验证产出格式；实际采集需在装有浏览器的本机执行 |
 | `start_chrome.py` 打印 `READY`，随后 `status` 报 `CDP_UNREACHABLE` | 进程随启动命令被回收，或浏览器沙箱初始化失败 | 按「浏览器生命周期」的沙箱不可用流程启动 |
 | 任务完成后浏览器仍在运行 | 未执行关闭步骤 | 运行 `scripts/stop_chrome.py`，再复核到 `CDP_UNREACHABLE` |
 | 某个关键词抓到 0 条 | 人机验证拦截 | 请用户完成验证，再只补跑该关键词 |

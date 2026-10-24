@@ -38,7 +38,7 @@ def main():
     ap.add_argument("--out", required=True, help="输出目录")
     ap.add_argument("--keywords", required=True, help="逗号分隔的关键词列表")
     ap.add_argument("--rounds", type=int, default=6, help="每个关键词向下翻页轮数，默认 6")
-    ap.add_argument("--cdp-skill", default=None, help="指定浏览器通道目录（默认用内嵌的 scripts/browser，也可传市场版技能目录）")
+    ap.add_argument("--cdp-skill", default=None, help="指定浏览器通道目录（默认用内嵌的 scripts，也可传市场版技能目录）")
     ap.add_argument("--port", default="9222")
     ap.add_argument("--pause-min", type=float, default=4.5, help="翻页间隔下限（秒）")
     ap.add_argument("--pause-max", type=float, default=6.5, help="翻页间隔上限（秒）")
